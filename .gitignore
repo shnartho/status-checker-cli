@@ -1,0 +1,105 @@
+# Gradle specific
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
+gradle-app.setting
+gradle-app.setting.lock
+gradle.properties
+gradle-local.properties
+gradlew
+gradlew.bat
+
+# IntelliJ IDEA specific
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea/
+*.swp
+*~
+
+# Eclipse specific
+.project
+.classpath
+.settings/
+.metadata/
+
+# NetBeans specific
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# macOS specific
+.DS_Store
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Dependency directories
+node_modules/
+jspm_packages/
+# Optional npm cache directory
+.npm/
+
+# Yarn
+.yarn/
+.pnp.*
+.yarn-integrity
+
+# Miscellaneous
+tmp/
+temp/
+.vscode/
+*.class
+*.jar
+*.war
+*.ear
+*.db
+*.pdf
+*.ppt
+*.pptx
+*.doc
+*.docx
+*.xls
+*.xlsx
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.dylib
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Static files
+public/
+dist/
+target/
+
+# End of line marker
+*.py[cod]
+*.sqlite3
+__pycache__/
+
+# Others
+coverage/
+*.env
+.env.local
+.env.*.local
