@@ -12,7 +12,7 @@ class StatusChecker {
 
     fun run(args: Array<String>) {
         if (args.isEmpty()) {
-            println("Usage: statuscheck <command> [options]")
+            println("Usage: StatusChecker <command> [options]")
             println("Available commands: fetch, live, history, backup, restore")
             return
         }
@@ -30,23 +30,69 @@ class StatusChecker {
     }
 
     private fun fetch(args: Array<String>) {
-        val urls = if (args.isEmpty()) dataStore.loadWebsiteConfigs().map { it.url } else args.toList()
-        val statuses = urls.map { WebsiteStatus(it, getWebsiteStatus(it), System.currentTimeMillis()) }
+        val showResult = args.contains("--show-result")
+        val subsetArgument = args.find { it.startsWith("--subset=") }
+        val subsetCount = subsetArgument?.substringAfter("=")?.toIntOrNull() ?: Int.MAX_VALUE
+
+        val urls = dataStore.loadWebsiteConfigs().map { it.url }.take(subsetCount)
+
+        if (urls.isEmpty()) {
+            println("No URLs configured in the datastore.")
+            return
+        }
+
+        val validUrls = urls.filter { isValidUrl(it) }
+        val statuses = validUrls.mapNotNull { url ->
+            val status = getWebsiteStatus(url)
+            if (status != -1) {
+                if (showResult) {
+                    println("$url: $status")
+                }
+                WebsiteStatus(url, status, System.currentTimeMillis())
+            } else {
+                null
+            }
+        }
+
         dataStore.saveWebsiteStatuses(statuses)
-        println("Successfully fetched statuses for: ${urls.joinToString(", ")}")
+
+        if (statuses.isNotEmpty()) {
+            println("Successfully fetched statuses for: ${statuses.map { it.url }.joinToString(", ")}")
+        } else {
+            println("No valid URLs provided or fetched successfully. Example of a valid URL: https://www.example.com")
+        }
     }
 
     private fun live(args: Array<String>) {
-        val urls = if (args.isEmpty()) dataStore.loadWebsiteConfigs().map { it.url } else args.toList()
+        val showResult = args.contains("--show-result")
+        val subsetArgument = args.find { it.startsWith("--subset=") }
+        val subsetCount = subsetArgument?.substringAfter("=")?.toIntOrNull() ?: Int.MAX_VALUE
+
+        val urls = dataStore.loadWebsiteConfigs().map { it.url }.take(subsetCount)
+
+        if (urls.isEmpty()) {
+            println("No URLs configured in the datastore.")
+            return
+        }
+
+        val validUrls = urls.filter { isValidUrl(it) }
 
         val executor = Executors.newSingleThreadScheduledExecutor()
         executor.scheduleAtFixedRate({
-            val statuses = urls.map { WebsiteStatus(it, getWebsiteStatus(it), System.currentTimeMillis()) }
+            val statuses = validUrls.map { url ->
+                val status = getWebsiteStatus(url)
+                if (showResult) {
+                    println("$url: $status")
+                }
+                WebsiteStatus(url, status, System.currentTimeMillis())
+            }
             dataStore.saveWebsiteStatuses(statuses)
-            println("Live status updates for: ${urls.joinToString(", ")}")
+            if (showResult) {
+                println("Live status updates for: ${validUrls.joinToString(", ")}")
+            }
         }, 0, 5, TimeUnit.SECONDS)
 
-        println("Live monitoring started for: ${urls.joinToString(", ")}")
+        println("Live monitoring started for: ${validUrls.joinToString(", ")}")
         println("Press Ctrl+C to stop monitoring")
         readlnOrNull()
         executor.shutdown()
@@ -92,6 +138,11 @@ class StatusChecker {
     }
 
     private fun getWebsiteStatus(url: String): Int {
+        if (!isValidUrl(url)) {
+            println("Error: Invalid URL: $url")
+            return -1
+        }
+
         try {
             val connection = URL(url).openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
@@ -104,6 +155,12 @@ class StatusChecker {
             return -1
         }
     }
+
+    private fun isValidUrl(url: String): Boolean {
+        val urlPattern = Regex("^(https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
+        return urlPattern.matches(url)
+    }
+
 }
 
 fun main(args: Array<String>) {

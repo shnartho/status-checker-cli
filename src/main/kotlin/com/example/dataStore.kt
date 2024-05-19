@@ -13,7 +13,7 @@ data class WebsiteConfig(val url: String)
 class DataStore {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val dataStoreFile = File("./src/main/resources/website_data.json")
+    private val dataStoreFile = File("website_data.json")
 
     fun saveWebsiteStatuses(websiteStatuses: List<WebsiteStatus>) {
         val json = gson.toJson(websiteStatuses)
@@ -43,7 +43,7 @@ class DataStore {
     }
 
     fun loadWebsiteConfigs(): List<WebsiteConfig> {
-        val configFile = File("./src/main/resources/web_config.json")  // Change the file extension to .json
+        val configFile = File("web_config.json")  // Change the file extension to .json
         return try {
             if (configFile.exists()) {
                 gson.fromJson(
