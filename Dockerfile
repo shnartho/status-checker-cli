@@ -11,8 +11,7 @@ RUN /app/gradlew dependencies
 
 COPY . /app
 
-#RUN /app/gradlew build --stacktrace --info --debug
-RUN /app/gradlew build
+RUN /app/gradlew build --stacktrace --info --debug
 
 #EXPOSE 8080
 
