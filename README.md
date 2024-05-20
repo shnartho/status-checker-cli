@@ -12,7 +12,7 @@ This command-line tool allows you to monitor the status of multiple websites sim
 ## Installation:
 You can run the tool in an isolated Docker environment by following these steps:
 1. Make sure you have docker installed in your machine. Unzip the file and go to project directory `StatusChecker`.
-2. Now Build the Docker image: `docker build -t status-checker .` (incase of error re-try)
+2. Now Build the Docker image: `docker build -t status-checker .` (incase of error re-run the command)
 3. Access terminal of the container: `docker run -it status-checker`. Now you can run the cli using `sc`.
 
 - Not recommended: You can also install java-17 and gradle/gradlew(windows), then run `gradle test`/`gradle build`, go to build/libs and you can access the cli using `java -jar <.jar filename> fetch ...` 

@@ -1,6 +1,5 @@
 # Gradle specific
 .gradle/
-build/
 out/
 !gradle/wrapper/gradle-wrapper.jar
 .gradle/
@@ -8,7 +7,6 @@ gradle-app.setting
 gradle-app.setting.lock
 gradle.properties
 gradle-local.properties
-gradlew
 gradlew.bat
 
 # IntelliJ IDEA specific
@@ -28,7 +26,6 @@ gradlew.bat
 
 # NetBeans specific
 nbproject/private/
-build/
 nbbuild/
 dist/
 nbdist/

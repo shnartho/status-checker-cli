@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.StatusCheckerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2024-05-20T21:13:55" hostname="DESKTOP-B4R3LP5" time="0.843">
+  <properties/>
+  <testcase name="getWebsiteStatus should return 200 for valid URL()" classname="com.example.StatusCheckerTest" time="0.782"/>
+  <testcase name="test backup and restore()" classname="com.example.StatusCheckerTest" time="0.045"/>
+  <testcase name="isValidUrl should return true for valid URLs()" classname="com.example.StatusCheckerTest" time="0.001"/>
+  <testcase name="isValidUrl should return false for invalid URLs()" classname="com.example.StatusCheckerTest" time="0.002"/>
+  <testcase name="test loadWebsiteStatuses with page()" classname="com.example.StatusCheckerTest" time="0.007"/>
+  <testcase name="getWebsiteStatus should return -1 for invalid URL()" classname="com.example.StatusCheckerTest" time="0.001"/>
+  <system-out><![CDATA[Backup created successfully at: backup.json
+Restore completed successfully from: backup.json
+Error: Invalid URL: invalid
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
