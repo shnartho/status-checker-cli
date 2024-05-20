@@ -1,7 +1,6 @@
 # Gradle specific
 .gradle/
 out/
-!gradle/wrapper/gradle-wrapper.jar
 .gradle/
 gradle-app.setting
 gradle-app.setting.lock
@@ -59,7 +58,6 @@ tmp/
 temp/
 .vscode/
 *.class
-*.jar
 *.war
 *.ear
 *.db
@@ -81,7 +79,6 @@ temp/
 *.dylib
 
 # Package Files
-*.jar
 *.war
 *.ear
 
