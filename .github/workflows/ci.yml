@@ -33,27 +33,13 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
-    - name: Clean Gradle Cache
-      run: |
-        rm -rf ~/.gradle/caches
-        rm -rf ~/.gradle/wrapper
-
-    - name: Make gradlew executable
-      run: chmod +x ./gradlew
-
-    - name: Install dependencies
-      run: ./gradlew dependencies
-
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
-
     - name: Build and push Docker image
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        docker build -t myapp .
+        docker build -t status-checker .
         docker push $DOCKER_USERNAME/status-checker:latest
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
