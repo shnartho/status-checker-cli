@@ -1,0 +1,44 @@
+{
+  "1": [
+    {
+      "url": "https://www.example.com",
+      "status": 200,
+      "timestamp": 1683895200000
+    },
+    {
+      "url": "https://www.google.com",
+      "status": 404,
+      "timestamp": 1683895260000
+    },
+    {
+      "url": "https://www.anotherexample.com",
+      "status": 200,
+      "timestamp": 1683895300000
+    },
+    {
+      "url": "https://www.example.com",
+      "status": 200,
+      "timestamp": 1683895200000
+    },
+    {
+      "url": "https://www.google.com",
+      "status": 404,
+      "timestamp": 1683895260000
+    },
+    {
+      "url": "https://www.example.com",
+      "status": 200,
+      "timestamp": 1683895200000
+    },
+    {
+      "url": "https://www.google.com",
+      "status": 404,
+      "timestamp": 1683895260000
+    },
+    {
+      "url": "https://www.anotherexample.com",
+      "status": 200,
+      "timestamp": 1683895300000
+    }
+  ]
+}

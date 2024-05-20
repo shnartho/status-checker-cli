@@ -13,37 +13,60 @@ data class WebsiteConfig(val url: String)
 class DataStore {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val dataStoreFile = File("website_data.json")
+    private val dataStoreFile = File("data_store.json")
+    private val pageSize = 10
 
     fun saveWebsiteStatuses(websiteStatuses: List<WebsiteStatus>) {
-        val json = gson.toJson(websiteStatuses)
+        val allStatuses = loadAllStatuses()
+        val latestPage = allStatuses.keys.maxOrNull() ?: 1
+        var currentPage = latestPage
+        var currentPageStatuses = allStatuses[currentPage]?.toMutableList() ?: mutableListOf()
+
+        websiteStatuses.forEach { status ->
+            if (currentPageStatuses.size >= pageSize) {
+                currentPage++
+                currentPageStatuses = mutableListOf()
+            }
+            currentPageStatuses.add(status)
+            allStatuses[currentPage] = currentPageStatuses
+        }
+
         try {
             FileWriter(dataStoreFile).use { writer ->
-                writer.write(json)
+                gson.toJson(allStatuses, writer)
             }
         } catch (e: Exception) {
             println("Error saving website statuses: ${e.message}")
         }
     }
 
-    fun loadWebsiteStatuses(): List<WebsiteStatus> {
+    fun loadWebsiteStatuses(page: Int? = null): List<WebsiteStatus> {
+        return if (page != null) {
+            val allStatuses = loadAllStatuses()
+            allStatuses[page] ?: emptyList()
+        } else {
+            loadAllStatuses().values.flatten()
+        }
+    }
+
+    fun loadAllStatuses(): MutableMap<Int, List<WebsiteStatus>> {
         return try {
             if (dataStoreFile.exists()) {
                 gson.fromJson(
                     FileReader(dataStoreFile),
-                    object : TypeToken<List<WebsiteStatus>>() {}.type
+                    object : TypeToken<MutableMap<Int, List<WebsiteStatus>>>() {}.type
                 )
             } else {
-                emptyList()
+                mutableMapOf()
             }
         } catch (e: Exception) {
             println("Error loading website statuses: ${e.message}")
-            emptyList()
+            mutableMapOf()
         }
     }
 
     fun loadWebsiteConfigs(): List<WebsiteConfig> {
-        val configFile = File("web_config.json")  // Change the file extension to .json
+        val configFile = File("web_config.json")
         return try {
             if (configFile.exists()) {
                 gson.fromJson(
@@ -60,8 +83,8 @@ class DataStore {
     }
 
     fun backup(backupFilePath: String) {
-        val websiteStatuses = loadWebsiteStatuses()
-        val json = gson.toJson(websiteStatuses)
+        val allStatuses = loadAllStatuses()
+        val json = gson.toJson(allStatuses)
         try {
             FileWriter(backupFilePath).use { writer ->
                 writer.write(json)
@@ -74,14 +97,47 @@ class DataStore {
 
     fun restore(backupFilePath: String) {
         try {
-            val websiteStatuses: List<WebsiteStatus> = gson.fromJson(
+            val backupData: MutableMap<Int, List<WebsiteStatus>> = gson.fromJson(
                 FileReader(backupFilePath),
-                object : TypeToken<List<WebsiteStatus>>() {}.type
+                object : TypeToken<MutableMap<Int, List<WebsiteStatus>>>() {}.type
             )
-            saveWebsiteStatuses(websiteStatuses)
+
+            val currentDataStore = loadAllStatuses()
+
+            if (backupData.isNotEmpty() && currentDataStore.isNotEmpty()) {
+                val backupFirstEntry = backupData.entries.first()
+                val currentFirstEntry = currentDataStore.entries.first()
+                if (backupFirstEntry.key.javaClass != currentFirstEntry.key.javaClass ||
+                    backupFirstEntry.value.javaClass != currentFirstEntry.value.javaClass
+                ) {
+                    println("Error: Backup and current data store have different file formats. Restore aborted.")
+                    return
+                }
+            }
+
+            val latestPage = currentDataStore.keys.maxOrNull() ?: 0
+
+            var currentPage = latestPage
+            var currentPageItems = currentDataStore.getOrDefault(currentPage, emptyList()).toMutableList()
+
+            backupData.values.flatten().forEach { status ->
+                if (currentPageItems.size >= pageSize) {
+                    currentPage++
+                    currentPageItems = mutableListOf()
+                }
+                currentPageItems.add(status)
+                currentDataStore[currentPage] = currentPageItems
+            }
+
+            FileWriter(dataStoreFile).use { writer ->
+                gson.toJson(currentDataStore, writer)
+            }
             println("Restore completed successfully from: $backupFilePath")
         } catch (e: Exception) {
             println("Error restoring from backup: ${e.message}")
         }
     }
+
+
+
 }
