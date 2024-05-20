@@ -55,5 +55,9 @@ The `fetch` command is used to fetch the status of websites and save it to a dat
 - example: `sc restore bkp_data_20240520.json`
 - N.B: It won't replace previous data of data store.
 
+## CI/CD Integration:
+- GitHub Actions is configured to automatically build the project and push Docker images to Docker Hub. Check `.github/workflows/cicd.yml`
+
+
 ## License:
 This project is licensed under the [MIT License](LICENSE).
